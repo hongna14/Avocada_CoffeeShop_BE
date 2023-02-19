@@ -4,12 +4,18 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where
+  Where,
 } from '@loopback/repository';
 import {
-  del, get,
-  getModelSchemaRef, param, patch, post, put, requestBody,
-  response
+  del,
+  get,
+  getModelSchemaRef,
+  param,
+  patch,
+  post,
+  put,
+  requestBody,
+  response,
 } from '@loopback/rest';
 import {Orders} from '../models';
 import {OrdersRepository} from '../repositories';
@@ -17,7 +23,7 @@ import {OrdersRepository} from '../repositories';
 export class OrdersController {
   constructor(
     @repository(OrdersRepository)
-    public ordersRepository : OrdersRepository,
+    public ordersRepository: OrdersRepository,
   ) {}
 
   @post('/orders')
@@ -46,9 +52,7 @@ export class OrdersController {
     description: 'Orders model count',
     content: {'application/json': {schema: CountSchema}},
   })
-  async count(
-    @param.where(Orders) where?: Where<Orders>,
-  ): Promise<Count> {
+  async count(@param.where(Orders) where?: Where<Orders>): Promise<Count> {
     return this.ordersRepository.count(where);
   }
 
@@ -64,12 +68,9 @@ export class OrdersController {
       },
     },
   })
-  async find(
-    @param.filter(Orders) filter?: Filter<Orders>,
-  ): Promise<Orders[]> {
+  async find(@param.filter(Orders) filter?: Filter<Orders>): Promise<Orders[]> {
     return this.ordersRepository.find(filter);
   }
-
 
   @patch('/orders')
   @response(200, {
@@ -101,7 +102,8 @@ export class OrdersController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Orders, {exclude: 'where'}) filter?: FilterExcludingWhere<Orders>
+    @param.filter(Orders, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Orders>,
   ): Promise<Orders> {
     return this.ordersRepository.findById(id, filter);
   }

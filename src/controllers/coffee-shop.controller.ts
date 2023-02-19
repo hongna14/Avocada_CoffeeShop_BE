@@ -103,16 +103,16 @@ export class CoffeeShopController {
 
     const orders = await this.ordersRepository.find({
       where: {coffee_shop_id: id},
+      include: [{relation: 'product'}],
     });
 
-    const products = await this.productRepository.find({include: ['orders']});
-    console.log(products);
-
-    console.log(orders);
-
+    let totalIncome = 0;
+    for (const order of orders) {
+      totalIncome += order.order_quantity * order.product.product_price;
+    }
     const result: Statistic = {
       employeeAmount: employees.length,
-      totalIncome: 100,
+      totalIncome,
       bestProduct: new Product({}),
     };
 

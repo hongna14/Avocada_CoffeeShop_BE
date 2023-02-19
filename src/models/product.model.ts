@@ -1,5 +1,4 @@
-import {Entity, hasMany, model, property} from '@loopback/repository';
-import {Orders} from './orders.model';
+import {Entity, model, property} from '@loopback/repository';
 @model({settings: {strict: true}})
 export class Product extends Entity {
   @property({
@@ -26,12 +25,6 @@ export class Product extends Entity {
   })
   product_type_id: number;
 
-  @hasMany(() => Orders, {keyTo: 'product_id'})
-  orders?: Orders[];
-  // Define well-known properties here
-
-  // Indexer property to allow additional data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [prop: string]: any;
 
   constructor(data?: Partial<Product>) {

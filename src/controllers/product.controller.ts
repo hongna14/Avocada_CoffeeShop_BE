@@ -137,24 +137,6 @@ export class ProductController {
   ): Promise<void> {
     await this.productRepository.replaceById(id, product);
   }
-  //Test hasMany
-  @get('/productRelation')
-  @response(200, {
-    description: 'Array of Product model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Product, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async testRelation(
-    @param.filter(Product) filter?: Filter<Product>,
-  ): Promise<Product[]> {
-    return this.productRepository.find({include: ['orders']});
-  }
 
   @del('/products/{id}')
   @response(204, {
