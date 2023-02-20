@@ -7,7 +7,7 @@ export class Account extends Entity {
     id: true,
     generated: true,
   })
-  user_id?: number;
+  user_id: number;
 
   @property({
     type: 'string',

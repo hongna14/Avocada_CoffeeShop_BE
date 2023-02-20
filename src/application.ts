@@ -13,6 +13,7 @@ import {MySequence} from './sequence';
 import {AuthenticationComponent} from '@loopback/authentication';
 import {
   JWTAuthenticationComponent,
+  TokenServiceBindings,
   UserServiceBindings,
 } from '@loopback/authentication-jwt';
 
@@ -32,6 +33,10 @@ export class CoffeeshopApplication extends BootMixin(
     this.component(JWTAuthenticationComponent);
     // Bind datasource
     this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
+    // for jwt access token
+    this.bind(TokenServiceBindings.TOKEN_SECRET).to('my-jwt-secret-key');
+    // for jwt access token expiration
+    this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to('86400');
     // ------------- END OF SNIPPET -------------
 
     // Set up the custom sequence
