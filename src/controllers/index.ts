@@ -8,3 +8,4 @@ export * from './payment-type.controller';
 export * from './ping.controller';
 export * from './product-type.controller';
 export * from './product.controller';
+export * from './user-test.controller';

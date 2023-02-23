@@ -1,10 +1,9 @@
 import {property} from '@loopback/repository';
 import {Product} from '../models';
 
-export class Statistic  {
+export class Statistic {
   @property({
     type: 'number',
-
   })
   employeeAmount?: number;
 
@@ -17,7 +16,4 @@ export class Statistic  {
     type: 'object',
   })
   bestProduct?: Product;
-
 }
-
-

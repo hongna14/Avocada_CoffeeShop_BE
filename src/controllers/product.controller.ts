@@ -1,3 +1,6 @@
+import {authenticate} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
+import {inject} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -17,20 +20,32 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {Product} from '../models';
 import {ProductRepository} from '../repositories';
-
 export class ProductController {
   constructor(
+    @inject(SecurityBindings.USER, {optional: true})
+    public user: UserProfile,
+
     @repository(ProductRepository)
-    public productRepository: ProductRepository,
+    protected productRepository: ProductRepository,
   ) {}
+
+  @authenticate('jwt')
+  @authorize({
+    resource: 'product',
+    scopes: ['create'],
+    allowedRoles: ['admin'],
+    //voters: [basicAuthorization],
+  })
   @post('/products')
   @response(200, {
     description: 'Product model instance',
     content: {'application/json': {schema: getModelSchemaRef(Product)}},
   })
   async create(
+    // @inject(SecurityBindings.USER)
     @requestBody({
       content: {
         'application/json': {

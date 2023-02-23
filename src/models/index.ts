@@ -6,3 +6,5 @@ export * from './orders.model';
 export * from './payment-type.model';
 export * from './product-type.model';
 export * from './product.model';
+export * from './user-test.model';
+export * from './testmigrate.model';

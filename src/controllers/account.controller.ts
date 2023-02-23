@@ -41,25 +41,56 @@ class SignInPayload {
 const myInterceptor: Interceptor = async (invocationCtx, next) => {
   // console.log(JSON.stringify(invocationCtx));
   const request: any = await invocationCtx.get(RestBindings.Http.REQUEST);
-  //const context: any = invocationCtx.getScopedContext(BindingScope.REQUEST);
-  //console.log(context.request.rawHeaders);
-  //const headers = context.headers;
   const headers = request.headers;
+  const rawToken = headers['authorization'];
 
-  console.log('teest', headers);
-  const token = (headers['authorization'] as string).slice('Bearer '.length);
+  // không tìm thấy token trong header
+  if (!rawToken) return 'Unauthorize';
+
+  const token = rawToken.slice('Bearer '.length);
   try {
-    const decode = jwt.verify(token, 'this-is-my-secret-key');
-
-    console.log(decode);
-    const context = await invocationCtx.bind('something').to(decode);
+    const decoded = jwt.verify(token, 'this-is-my-secret-key');
+    request['decodedUser'] = decoded;
   } catch (e) {
     console.log(e);
+    return e;
   }
+
   // if success
   next();
   // if error
-  throw new HttpErrors.NotFound();
+  // throw new HttpErrors.NotFound();
+};
+
+export const myAuthor = (roles: string[]): Interceptor => {
+  return async (invocationCtx, next) => {
+    // console.log(JSON.stringify(invocationCtx));
+    console.log(invocationCtx.args);
+    const request: any = await invocationCtx.get(RestBindings.Http.REQUEST);
+    const headers = request.headers;
+    const rawToken = headers['authorization'];
+
+    // không tìm thấy token trong header
+    if (!rawToken) throw new HttpErrors.Unauthorized();
+
+    const token = rawToken.slice('Bearer '.length);
+    try {
+      const decoded = jwt.verify(token, 'this-is-my-secret-key') as Account;
+      if (!roles.includes(decoded.role)) {
+        throw new HttpErrors.Forbidden(
+          'You are not allow to access this endpoint',
+        );
+      }
+      request['decodedUser'] = decoded;
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+    // if success
+    next();
+    // if error
+    // throw new HttpErrors.NotFound();
+  };
 };
 
 export class AccountController {
@@ -130,7 +161,7 @@ export class AccountController {
 
   // ######## SIGN IN VERSION 2 ########
 
-  @post('/acount/signin', {
+  @post('/acount/signinv2', {
     responses: {
       '200': {
         description: 'Token',
@@ -224,6 +255,7 @@ export class AccountController {
 
   //GET CURRENT USER
   @intercept(myInterceptor)
+  //@intercept(myAuthor(['guest']))
   @get('/whoAmI', {
     responses: {
       '200': {
@@ -239,7 +271,10 @@ export class AccountController {
     },
   })
   async whoAmI() {
-    const something = this.request.get('something');
-    console.log(something);
+    // cách để lấy user dã gắn trong interceptor
+    const user = (this.request as any).decodedUser;
+
+    console.log('DECODED USER: ', user);
+    return user;
   }
 }

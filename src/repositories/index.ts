@@ -6,3 +6,4 @@ export * from './orders.repository';
 export * from './payment-type.repository';
 export * from './product-type.repository';
 export * from './product.repository';
+export * from './user-test.repository';
